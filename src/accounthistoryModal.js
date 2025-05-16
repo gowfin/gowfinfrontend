@@ -1,6 +1,8 @@
 import React from 'react';
 
+
 const Modal = ({ accountHistory, isHistoryOpen, setIsHistoryOpen, message, error }) => {
+ 
   if (!isHistoryOpen) return null;
 const balance=0;
   return (
@@ -20,6 +22,7 @@ const balance=0;
             <th>Amount</th>
             <th>Running Balance</th>
             <th>Posted By</th>
+           
           </tr>
             
             </thead>
@@ -42,7 +45,7 @@ const balance=0;
             <td style={{ fontWeight: 'bold', color: isAmountNegative ? 'red' : 'green' }}>{isAmountNegative ? `₦${Number(item.amount).toLocaleString()}` : `₦${item.amount.toLocaleString()}`}</td>
             <td style={{ fontWeight: 'bold', color: isRunBalNegative ? 'red' : 'green' }}>{`₦${item.Runningbal.toLocaleString()}`}</td>
             <td>{item.CreatedBy}</td>
-          </tr>
+                     </tr>
         )}) }
         
             </tbody>
@@ -54,6 +57,7 @@ const balance=0;
           Close
         </button>
       </div>
+   
     </div>
   );
 };

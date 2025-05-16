@@ -7,6 +7,7 @@ import  './menu.css';
 import TransactionModal  from './transactionmodal';
 import DisbursementModal  from './disbursementModal';
 import Repayschedule  from './repaymentscheduleModal';
+import Reversal  from './reversalModal';
 
 // import { localhost } from './env.js';
 
@@ -47,8 +48,12 @@ const AccountPage = ({ state, setState }) => {
   const [trxRunningBal,setTrxRunningBal]=useState('');
   const [trxAccName,setTrxAccName]=useState('');
   const [showAllAccounts, setShowAllAccounts] = useState(false);
+  const [isReversalOpen,setIsReversalOpen]=useState(false);
+  const [transaction,setTransaction]=useState([]);
 
   const displayGL=userrole.toUpperCase()==='CSO' || userrole.toUpperCase()==='MARKETER'? false:true;
+  const isAdmin=userrole.toUpperCase()==='ADMINISTRATOR'? true:false;
+  
  
 ///search for custno from client creation
 useEffect(() => {
@@ -234,6 +239,8 @@ const handleDetail = async (accountid,balance) => {
     console.error("Error fetching account details:", error); // Log error
   }
 };
+
+
 const handleVerifyBal = async (custno, LoanID, AccountID,loanbal, savBal, balance, accname, userid) => {
   
    const balToAdjustTo=LoanID ? loanbal:savBal;
@@ -313,7 +320,10 @@ setSignPreview (signSource);
     setTrxAccName(AccName);
     item.slice()==='3' ||itemtype.includes('LN') ? setDep(false):setDep(true);
   };
-
+   const handleReversal=(index)=>{
+   setTransaction(accountHistory[index]);
+   setIsReversalOpen(true);
+   }
   const handleCloseDepMenu = () => {
     setShowMenu(false);
     setIsTrxModalOpen(true);
@@ -352,6 +362,9 @@ setSignPreview (signSource);
   const handleRepScheduleModalClose=()=>{
     setShowRepScheduleModal(false);
   }
+  const handleReversalModalClose=()=>{
+  setIsReversalOpen(false)
+}
     return (
     <div className="account-page">
       <div style={{display:'flex',direction:'row',width:'95%'}}>
@@ -371,7 +384,7 @@ setSignPreview (signSource);
    
    />}</div>
      <div>{showDisbModal && displayGL &&<DisbursementModal userid={userid} products={products} isOpen={true} onClose={handleDisbModalClose}  AccountID={trxAccountID}  AccountName={trxAccName} CustNo={clientData.custno}  accountName={clientData.Accountname} localhost={localhost} GroupID={clientData.groupid} sesdate={sesdate}/>}</div>
-     <div>{showRepScheduleModal && displayGL &&<Repayschedule isOpen={true} onClose={handleRepScheduleModalClose}  loanID={trxAccountID}  custno={clientData.custno} localhost={localhost} />}</div>
+     <div>{showRepScheduleModal && displayGL && <Repayschedule isOpen={true} onClose={handleRepScheduleModalClose}  loanID={trxAccountID}  custno={clientData.custno} localhost={localhost} />}</div>
  
 
       <form>
@@ -495,6 +508,7 @@ setSignPreview (signSource);
             <th>Amount</th>
             <th>Running Balance</th>
             <th>Posted By</th>
+            {isAdmin&&<th>{'Action'}</th>}
           </tr>
         </thead>
         <tbody>
@@ -516,6 +530,8 @@ setSignPreview (signSource);
               <td style={{ fontWeight: 'bold', color: isAmountNegative ? 'red' : 'green' }}>{isAmountNegative ? `₦${Number(item.amount).toLocaleString()}` : `₦${item.amount.toLocaleString()}`}</td>
               <td style={{ fontWeight: 'bold', color: isRunBalNegative ? 'red' : 'green' }}>{`₦${item.Runningbal.toLocaleString()}`}</td>
               <td>{item.CreatedBy}</td>
+              {isAdmin && <td><button style={{backgroundColor:'#e0e89f'}}onClick={()=>handleReversal(index)} >Reverse</button></td>}
+
             </tr>
           )}) }
           
@@ -523,8 +539,10 @@ setSignPreview (signSource);
       </table>
       
             <button onClick={closeHistory}>Close</button>
+            <div>{isReversalOpen && displayGL &&<Reversal transaction={transaction} userid={userid}  isOpen={true} onClose={handleReversalModalClose} localhost={localhost} sesdate={sesdate}/>}</div> 
+
           </div>
-        </div>
+          </div>
       )}
   
   {isDetailOpen && (
@@ -586,11 +604,7 @@ setSignPreview (signSource);
                   </tr>
                 )}
      
-              
-              
-          
-         
-          
+    
         </tbody>
       </table>
 

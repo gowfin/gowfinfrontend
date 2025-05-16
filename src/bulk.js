@@ -44,7 +44,7 @@ const handleRowClick = (id) => {
             // Combine products and data when they are both available
     const combined = data.map(loan=> {
         const matchingProduct = products.find(product =>
-            loan.loanproduct.trim() === product.id.trim(),
+            loan.loanproduct.trim().toUpperCase() === product.id.trim().toUpperCase(),
           
         );
   

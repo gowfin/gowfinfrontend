@@ -48,7 +48,7 @@ const Login = ({ setLoggedIn, state, setState, isModalOpen, setIsModalOpen, bran
       setMessage('Wait...loading your settings');
       const checkLicense = async () => {
                 try {
-          
+        
           const response = await axios.post(`${localhost}/checklicense`);
           setMessage(response.data.message);
           setSesdate(response.data.sesdate);
@@ -66,12 +66,18 @@ const Login = ({ setLoggedIn, state, setState, isModalOpen, setIsModalOpen, bran
           setLicenseExpired(true); // Assume expired in case of error
         }
       };
-      const newLocalhost =  getLocalhost(companyname); // Wait for the async function to resolve
-      setLocalhost(newLocalhost); // Update the state
-
-      checkLicense();
-    },[localhost],[companyname]);
+      // const newLocalhost =  getLocalhost(companyname); // Wait for the async function to resolve
+      // setLocalhost(newLocalhost); // Update the state
     
+      checkLicense();
+    },[localhost]);
+    /////////////////////
+    useEffect(() => {
+      if (companyname) {
+        const newLocalhost = getLocalhost(companyname);
+        setLocalhost(newLocalhost);
+      }
+    }, [companyname]); // This effect runs whenever `companyname` changes
   
 /////////////////////////////////////
   const togglePasswordVisibility = () => {
